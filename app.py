@@ -1,6 +1,7 @@
 from flask import Flask, request, jsonify
 import sqlite3
 import hashlib
+import os
 
 app = Flask(__name__)
 DB_FILE = "central_users.db"
@@ -93,4 +94,5 @@ if __name__ == "__main__":
                         role TEXT,
                         status TEXT)''')
     conn.close()
-    app.run(debug=True)
+    port = int(os.environ.get("PORT", 5000))  # use Render's assigned port
+    app.run(host='0.0.0.0', port=port)
