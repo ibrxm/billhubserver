@@ -4,7 +4,9 @@ import hashlib
 import os
 
 app = Flask(__name__)
-DB_FILE = "central_users.db"
+
+DB_FILE = os.path.join(os.path.dirname(__file__), "central_users.db")
+
 
 def hash_password(password):
     return hashlib.sha256(password.encode()).hexdigest()
@@ -82,6 +84,15 @@ def reset_password():
     conn.commit()
     conn.close()
     return jsonify({"status": "success", "message": "Password reset successfully"})
+
+@app.route('/show_users', methods=['GET'])
+def show_users():
+    conn = sqlite3.connect(DB_FILE)
+    cursor = conn.cursor()
+    cursor.execute("SELECT id, username, role, status FROM users")
+    users = cursor.fetchall()
+    conn.close()
+    return jsonify(users)
 
 if __name__ == "__main__":
     # Initialize DB if not exist
